@@ -9,7 +9,9 @@ namespace priority_queue {
  */
 template <typename T>
 struct Element {
-  // Implementasikan di sini.
+  T data;
+  T priority;
+  Element *next;
 };
 
 template <typename T>
@@ -17,10 +19,12 @@ using ElementPtr = Element<T> *;
 
 /**
  * @brief implemetasi struct untuk queue.
+
  */
 template <typename T>
 struct Queue {
-  // Implementasikan di sini.
+  ElementPtr<T> Head;
+  ElementPtr<T> Tail;
 };
 
 /**
@@ -30,7 +34,10 @@ struct Queue {
  */
 template <typename T>
 Queue<T> new_queue() {
-  // Implementasikan di sini.
+  Queue<T> q;
+  q.Head = nullptr;
+  q.Tail = nullptr;
+  return q;
 }
 
 /**
@@ -42,7 +49,36 @@ Queue<T> new_queue() {
  */
 template <typename T>
 void enqueue(Queue<T> &q, const T &value, int priority) {
-  // Implementasikan di sini.
+  ElementPtr<T> pBaru = new Element<T>;
+  pBaru->data = value;
+  pBaru->priority = priority;
+  pBaru->next = nullptr;
+
+  ElementPtr<T> pRev = nullptr;
+  ElementPtr<T> pHelp = q.Head;
+
+  if (q.Head == nullptr && q.Tail == nullptr){
+    q.Head = pBaru;
+    q.Tail = pBaru;
+  } else {
+    while (pBaru->priority <= pHelp->priority){
+      if (pHelp->next == nullptr)
+        break;
+      pRev = pHelp;
+      pHelp = pHelp -> next;
+    }
+
+    if (pHelp == q.Head && pBaru->priority > pHelp->priority){
+      pBaru->next = pHelp;
+      q.Head = pBaru;
+    } else if (pHelp == q.Tail && pBaru->priority < pHelp->priority){
+      pHelp->next = pBaru;
+      q.Tail = pBaru;
+    } else {
+      pRev->next = pBaru;
+      pBaru->next = pHelp;
+    }
+  }
 }
 
 /**
@@ -53,7 +89,7 @@ void enqueue(Queue<T> &q, const T &value, int priority) {
  */
 template <typename T>
 T top(const Queue<T> &q) {
-  // Implementasikan di sini.
+  return q.Head->data;
 }
 
 /**
@@ -63,7 +99,19 @@ T top(const Queue<T> &q) {
  */
 template <typename T>
 void dequeue(Queue<T> &q) {
-  // Implementasikan di sini.
+  ElementPtr<T> pDel;
+
+  if(q.Head == nullptr && q.Tail == nullptr){
+    pDel = nullptr;
+  } else if (q.Head->next == nullptr){
+    pDel = q.Head;
+    q.Head = nullptr;
+    q.Tail = nullptr;
+  } else {
+    pDel = q.Head;
+    q.Head = q.Head->next;
+    pDel->next = nullptr;
+  }  
 }
 
 }  // namespace priority_queue
